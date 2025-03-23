@@ -24,10 +24,10 @@ def recieve_cookie():
     
     if not flag:
       print("잘못된 flag 입니다.")
-      return
+      return jsonify({"message": "failed"}), 400
 
     is_waiting = False
-    return
+    return jsonify({"message": "success"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
