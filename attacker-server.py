@@ -3,32 +3,22 @@ import threading
 
 app = Flask(__name__)
 
-waiting_request = None
-waiting_thread = None
-
-def send_flag_response(flag):
-    with app.app_context():
-        if waiting_request:
-            print(f"flag가 전송되었습니다. : {flag}")
-            waiting_thread.result = flag
-            waiting_request = False 
+is_waiting = True
+flag = ""
 
 @app.route('/get_flag', methods=['GET'])
 def get_flag():
-    global waiting_request
+    global is_waiting
     print("Waiting for flag...")
 
-    waiting_request = True
-    waiting_thread = threading.local()
-    waiting_thread.result = None
-
-    while waiting_request:
+    while is_waiting:
         pass
 
-    return jsonify({"flag": waiting_thread.result}), 200
+    return jsonify({"flag": flag}), 200
 
 @app.route('/recieve_cookie', methods=['GET'])
 def recieve_cookie():
+    global flag, is_waiting
     flag = request.args.get('flag')
     print(f"서버가 flag를 수신했했습니다. : {flag}")
     
@@ -36,7 +26,7 @@ def recieve_cookie():
       print("잘못된 flag 입니다.")
       return
 
-    threading.Thread(target=send_flag_response, args=(flag,)).start()
+    is_waiting = False
     return
 
 if __name__ == '__main__':
