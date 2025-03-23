@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import threading
+import time
 
 app = Flask(__name__)
 
@@ -27,6 +27,9 @@ def recieve_cookie():
       return jsonify({"message": "failed"}), 400
 
     is_waiting = False
+    time.sleep(3)
+    flag = ""
+    
     return jsonify({"message": "success"}), 200
 
 if __name__ == '__main__':
